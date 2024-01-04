@@ -1,0 +1,76 @@
+base_model: mistralai/Mistral-7B-Instruct-v0.2 
+model_type: MistralForCausalLM
+tokenizer_type: LlamaTokenizer
+is_mistral_derived_model: true
+
+load_in_8bit: false
+load_in_4bit: true
+strict: false
+
+datasets:
+  - path: Amod/mental_health_counseling_conversations
+    data_files: combined_dataset.json
+    type: alpaca_chat.load_qa
+    
+dataset_prepared_path: last_run_prepared
+val_set_size: 0.01
+output_dir: /lumine-mistral-out
+
+sequence_len: 2048
+sample_packing: true
+pad_to_sequence_len: true
+
+adapter: lora
+lora_r: 16
+lora_alpha: 32
+lora_dropout: 0.05
+lora_target_modules:
+  - q_proj
+  - v_proj
+
+wandb_project:
+wandb_entity:
+wandb_watch:
+wandb_run_id:
+wandb_log_model:
+
+gradient_accumulation_steps: 1
+micro_batch_size: 4
+num_epochs: 2
+adam_beta2: 0.95
+adam_epsilon: 0.00001
+max_grad_norm: 1.0
+lr_scheduler: cosine
+learning_rate: 0.000006
+
+train_on_inputs: false
+group_by_length: false
+bf16: true
+fp16: false
+tf32: false
+
+gradient_checkpointing: true
+early_stopping_patience:
+resume_from_checkpoint:
+local_rank:
+logging_steps: 1
+xformers_attention:
+flash_attention: true
+
+warmup_steps: 100
+eval_steps: 0.05
+eval_table_size:
+eval_table_max_new_tokens:
+save_steps:
+debug:
+deepspeed: deepspeed/zero2.json
+weight_decay: 0.1
+fsdp:
+fsdp_config:
+special_tokens:
+  bos_token: "<s>"
+  eos_token: "<|im_end|>"
+  unk_token: "<unk>"
+tokens:
+  - "<|im_start|>"
+  - "<|im_end|>"
